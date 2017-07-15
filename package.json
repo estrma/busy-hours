@@ -1,0 +1,12 @@
+{
+  "name": "busy-hours",
+  "version": "0.0.1",
+  "description": "Scrape google places",
+  "main": "index.js",
+  "dependencies": {
+    "@google/maps": "^0.4.5",
+    "axios": "^0.17.1",
+    "cheerio": "latest",
+    "moment": "^2.20.1"
+  }
+}
