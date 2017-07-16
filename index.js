@@ -11,10 +11,10 @@ function busy_hours(place_id, key) {
         Promise: Promise
     });
 
-    let format = h => {
+    let format_output = array => {
         return {
-            hour: moment().hour(h[0]).format('HH'),
-            percentage: h[1]
+            hour: moment().hour(array[0]).format('HH'),
+            percentage: array[1]
         }
     }
 
@@ -28,7 +28,7 @@ function busy_hours(place_id, key) {
             let first = eval(script),
                 second = eval(first[3][6].replace(")]}'", ""));
 
-            let popular_times = second[0][1][0][14][84]; // week
+            let popular_times = second[0][1][0][14][84];
 
 
             let data = {};
@@ -36,16 +36,17 @@ function busy_hours(place_id, key) {
             data.week = Array.from(Array(7).keys()).map(index => {
                 return {
                     day: moment().isoWeekday(index).format('ddd'),
-                    hours: Array.from(popular_times[0][index][1]).map(h => {
-                        return format(h);
+                    hours: Array.from(popular_times[0][index][1]).map(array => {
+                        return format_output(array);
                     })
                 }
 
             });
 
             let crowded_now = popular_times[7];
+
             if (crowded_now !== undefined) {
-                data.now = format(crowded_now);
+                data.now = format_output(crowded_now);
             }
 
             return data;
@@ -73,7 +74,7 @@ function busy_hours(place_id, key) {
         console.log(err);
     };
 
-    let P = gmaps.place({placeid: place_id, language: 'pl'})
+    let new_promise = gmaps.place({placeid: place_id, language: 'pl'})
         .asPromise()
         .then(fetch_html)
         .catch(handle_err)
@@ -81,16 +82,10 @@ function busy_hours(place_id, key) {
         .catch(handle_err);
 
     return new Promise((resolve, reject) => {
-        resolve(P);
+        resolve(new_promise);
     });
 
 }
-
-// const get_hours = busy_hours(place_id, key);
-//
-// get_hours.then(data => {
-//     console.log(data)
-// });
 
 
 export default busy_hours;
