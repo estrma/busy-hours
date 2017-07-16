@@ -1,8 +1,18 @@
 {
   "name": "busy-hours",
-  "version": "0.0.1",
-  "description": "Scrape google places",
+  "version": "0.0.0",
+  "description": "Hacky scraper for Google Popular Times data",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rak-trzustki/busy-hours.git"
+  },
+  "keywords": [
+    "google",
+    "popular times",
+    "places api"
+  ],
+  "author": "E <e@tausendsassa.io>",
   "dependencies": {
     "@google/maps": "^0.4.5",
     "axios": "^0.17.1",
