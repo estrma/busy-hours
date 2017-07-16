@@ -35,7 +35,7 @@ function busy_hours(place_id, key) {
 
             data.week = Array.from(Array(7).keys()).map(index => {
                 return {
-                    day: moment().isoWeekday(index).format('ddd'),
+                    day: moment().isoWeekday(index).format('ddd').toLowerCase(),
                     hours: Array.from(popular_times[0][index][1]).map(array => {
                         return format_output(array);
                     })
@@ -88,4 +88,4 @@ function busy_hours(place_id, key) {
 }
 
 
-export default busy_hours;
+module.exports = busy_hours;
