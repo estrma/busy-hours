@@ -1,49 +1,49 @@
-const request = require('axios');
-const cheerio = require('cheerio');
-const moment = require('moment');
+'use strict';
 
+var _Promise = typeof Promise === 'undefined' ? require('es6-promise').Promise : Promise;
+
+var request = require('axios');
+var cheerio = require('cheerio');
+var moment = require('moment');
 
 function busy_hours(place_id, key) {
 
-
-    let gmaps = require('@google/maps').createClient({
+    var gmaps = require('@google/maps').createClient({
         key: key,
-        Promise: Promise
+        Promise: _Promise
     });
 
-    let format_output = array => {
+    var format_output = function format_output(array) {
         return {
             hour: moment().hour(array[0]).format('HH'),
             percentage: array[1]
-        }
-    }
+        };
+    };
 
-    let process_html = resp => {
+    var process_html = function process_html(resp) {
         // Achtung! Hacky AF
 
         if (resp) {
-            let html = resp.data,
+            var html = resp.data,
                 script = html.substring(html.lastIndexOf("APP_INITIALIZATION_STATE=") + 1, html.lastIndexOf("window.APP_FLAGS"));
 
-            let first = eval(script),
+            var first = eval(script),
                 second = eval(first[3][6].replace(")]}'", ""));
 
-            let popular_times = second[0][1][0][14][84];
+            var popular_times = second[0][1][0][14][84];
 
+            var data = {};
 
-            let data = {};
-
-            data.week = Array.from(Array(7).keys()).map(index => {
+            data.week = Array.from(Array(7).keys()).map(function (index) {
                 return {
                     day: moment().isoWeekday(index).format('ddd').toLowerCase(),
-                    hours: Array.from(popular_times[0][index][1]).map(array => {
+                    hours: Array.from(popular_times[0][index][1]).map(function (array) {
                         return format_output(array);
                     })
-                }
-
+                };
             });
 
-            let crowded_now = popular_times[7];
+            var crowded_now = popular_times[7];
 
             if (crowded_now !== undefined) {
                 data.now = format_output(crowded_now);
@@ -53,9 +53,9 @@ function busy_hours(place_id, key) {
         }
     };
 
-    let fetch_html = resp => {
+    var fetch_html = function fetch_html(resp) {
 
-        let json = resp.json;
+        var json = resp.json;
 
         if (json.result) {
 
@@ -66,26 +66,17 @@ function busy_hours(place_id, key) {
                 }
             });
         }
-
-
     };
 
-    let handle_err = err => {
+    var handle_err = function handle_err(err) {
         console.log(err);
     };
 
-    let new_promise = gmaps.place({placeid: place_id, language: 'pl'})
-        .asPromise()
-        .then(fetch_html)
-        .catch(handle_err)
-        .then(process_html)
-        .catch(handle_err);
+    var new_promise = gmaps.place({ placeid: place_id, language: 'pl' }).asPromise().then(fetch_html).catch(handle_err).then(process_html).catch(handle_err);
 
-    return new Promise((resolve, reject) => {
+    return new _Promise(function (resolve, reject) {
         resolve(new_promise);
     });
-
 }
-
 
 module.exports = busy_hours;

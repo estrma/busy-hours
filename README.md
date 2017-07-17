@@ -21,7 +21,7 @@ get_hours.then(data => {
     do_something_with(data); 
  });
 ```
-####Response
+Response
 
 ```javascript
 {
