@@ -1,5 +1,5 @@
 {
-  "name": "busy-hours",
+  "name": "busyhours",
   "version": "0.0.0",
   "description": "Hacky scraper for Google Popular Times data",
   "main": "index.js",
