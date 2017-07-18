@@ -21,18 +21,23 @@ function busy_hours(place_id, key) {
     };
 
     var process_html = function process_html(resp) {
-        // Achtung! Hacky AF
+        // ACHTUNG! HACKY AF
 
-        if (resp) {
+        if (resp.data) {
             var html = resp.data,
-                script = html.substring(html.lastIndexOf("APP_INITIALIZATION_STATE=") + 1, html.lastIndexOf("window.APP_FLAGS"));
+                str = ['APP_INITIALIZATION_STATE=', 'window.APP_FLAGS'],
+                script = html.substring(html.lastIndexOf(str[0]) + str[0].length, html.lastIndexOf(str[1]));
 
             var first = eval(script),
                 second = eval(first[3][6].replace(")]}'", ""));
 
             var popular_times = second[0][1][0][14][84];
 
-            var data = {};
+            if (popular_times === null) {
+                return { status: 'error', message: 'Place has no popular hours' };
+            }
+
+            var data = { status: 'ok' };
 
             data.week = Array.from(Array(7).keys()).map(function (index) {
                 return {
@@ -48,35 +53,40 @@ function busy_hours(place_id, key) {
             if (crowded_now !== undefined) {
                 data.now = format_output(crowded_now);
             }
-
             return data;
+        } else {
+            return { status: 'error' };
         }
     };
 
     var fetch_html = function fetch_html(resp) {
 
-        var json = resp.json;
+        var url = resp.json.result.url;
 
-        if (json.result) {
+        if (url) {
 
             return request({
-                url: json.result.url,
+                url: url,
                 headers: {
                     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36'
                 }
             });
+        } else {
+            return { status: 'error', message: 'Invalid url' };
         }
     };
 
     var handle_err = function handle_err(err) {
-        console.log(err);
+        // console.log(err);
+        return { status: 'error' };
     };
 
-    var new_promise = gmaps.place({ placeid: place_id, language: 'pl' }).asPromise().then(fetch_html).catch(handle_err).then(process_html).catch(handle_err);
+    var new_promise = gmaps.place({ placeid: place_id }, handle_err).asPromise().then(fetch_html).then(process_html);
 
     return new _Promise(function (resolve, reject) {
+
         resolve(new_promise);
-    });
+    }).catch(handle_err);
 }
 
 module.exports = busy_hours;

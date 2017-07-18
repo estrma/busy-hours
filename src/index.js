@@ -11,6 +11,7 @@ function busy_hours(place_id, key) {
         Promise: Promise
     });
 
+
     let format_output = array => {
         return {
             hour: moment().hour(array[0]).format('HH'),
@@ -21,17 +22,19 @@ function busy_hours(place_id, key) {
     let process_html = resp => {
         // ACHTUNG! HACKY AF
 
-        if (resp) {
+        if (resp.data) {
             let html = resp.data,
-                start = 'APP_INITIALIZATION_STATE=',
-                end = 'window.APP_FLAGS',
-                script = html.substring(html.lastIndexOf(start) + start.length, html.lastIndexOf(end));
+                str = ['APP_INITIALIZATION_STATE=', 'window.APP_FLAGS'],
+                script = html.substring(html.lastIndexOf(str[0]) + str[0].length, html.lastIndexOf(str[1]));
 
             let first = eval(script),
                 second = eval(first[3][6].replace(")]}'", ""));
 
             let popular_times = second[0][1][0][14][84];
 
+            if (popular_times === null) {
+                return {status: 'error', message: 'Place has no popular hours'};
+            }
 
             let data = {status: 'ok'};
 
@@ -50,7 +53,6 @@ function busy_hours(place_id, key) {
             if (crowded_now !== undefined) {
                 data.now = format_output(crowded_now);
             }
-
             return data;
         } else {
             return {status: 'error'};
@@ -59,35 +61,42 @@ function busy_hours(place_id, key) {
 
     let fetch_html = resp => {
 
-        let json = resp.json;
+        let url = resp.json.result.url;
 
-        if (json.result) {
+        if (url) {
 
             return request({
-                url: json.result.url,
+                url: url,
                 headers: {
                     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36'
                 }
             });
+
+        } else {
+            return {status: 'error', message: 'Invalid url'};
         }
 
 
     };
 
     let handle_err = err => {
-        console.log(err);
+        // console.log(err);
+        return {status: 'error'}
     };
 
-    let new_promise = gmaps.place({placeid: place_id, language: 'pl'})
-        .asPromise()
-        .then(fetch_html)
-        .catch(handle_err)
-        .then(process_html)
-        .catch(handle_err);
+
+    let new_promise = gmaps.place({placeid: place_id}, handle_err)
+            .asPromise()
+            .then(fetch_html)
+            .then(process_html)
+
+        ;
 
     return new Promise((resolve, reject) => {
+
         resolve(new_promise);
-    });
+
+    }).catch(handle_err);
 
 }
 
