@@ -23,7 +23,9 @@ function busy_hours(place_id, key) {
 
         if (resp) {
             let html = resp.data,
-                script = html.substring(html.lastIndexOf("APP_INITIALIZATION_STATE=") + 1, html.lastIndexOf("window.APP_FLAGS"));
+                start = 'APP_INITIALIZATION_STATE=',
+                end = 'window.APP_FLAGS',
+                script = html.substring(html.lastIndexOf(start) + start.length, html.lastIndexOf(end));
 
             let first = eval(script),
                 second = eval(first[3][6].replace(")]}'", ""));
@@ -31,7 +33,7 @@ function busy_hours(place_id, key) {
             let popular_times = second[0][1][0][14][84];
 
 
-            let data = {};
+            let data = {status: 'ok'};
 
             data.week = Array.from(Array(7).keys()).map(index => {
                 return {
@@ -50,6 +52,8 @@ function busy_hours(place_id, key) {
             }
 
             return data;
+        } else {
+            return {status: 'error'};
         }
     };
 
