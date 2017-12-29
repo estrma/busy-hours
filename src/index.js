@@ -64,33 +64,27 @@ function busy_hours(place_id, key) {
         let url = resp.json.result.url;
 
         if (url) {
-
             return request({
                 url: url,
                 headers: {
                     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36'
                 }
             });
-
         } else {
             return {status: 'error', message: 'Invalid url'};
         }
-
-
     };
 
     let handle_err = err => {
-        // console.log(err);
-        return {status: 'error'}
+
+        return {status: 'error', message: err}
     };
 
 
     let new_promise = gmaps.place({placeid: place_id}, handle_err)
-            .asPromise()
-            .then(fetch_html)
-            .then(process_html)
-
-        ;
+        .asPromise()
+        .then(fetch_html)
+        .then(process_html);
 
     return new Promise((resolve, reject) => {
 
