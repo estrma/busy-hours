@@ -1,11 +1,11 @@
 ## busy-hours 
 Barbaric node.js scraper for Google Places popular times data. 
 
-#### Installation
+### Installation
 ```javascript
 $ npm i busy-hours --save
 ```
-#### Usage
+### Usage
 * Get your [API key](https://developers.google.com/places/web-service/)
 * Retrieve the [Place ID](https://developers.google.com/maps/documentation/javascript/examples/places-placeid-finder)
 
@@ -45,7 +45,7 @@ Response
 
 
 
-#### Achtung!
+### Achtung!
 
 
 Using this code may violate clause 10.1(b) of [Google ToS](https://developers.google.com/maps/terms?#section_10_1), so beware.
