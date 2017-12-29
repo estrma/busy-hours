@@ -10,11 +10,9 @@ $ npm i busy-hours --save
 * Retrieve the [Place ID](https://developers.google.com/maps/documentation/javascript/examples/places-placeid-finder)
 
 ```javascript
-const busy_hours = require('busy_hours');
+const busy_hours = require('busy-hours');
 
-const get_hours = busy_hours(place_id, key);
-
-get_hours.then(data => {
+busy_hours(place_id, key).then(data => {
     do_something_with(data); 
  });
 ```
