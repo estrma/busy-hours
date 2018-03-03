@@ -23,7 +23,7 @@ Response
     week: [
     {
         day: 'mon',
-        hours: [
+        hours: [ // or empty array
             { 
               hour: '06',
               percentage: 21,

@@ -1,6 +1,6 @@
 {
   "name": "busy-hours",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Hacky web scraper for retrieving Google Places popular times data",
   "main": "./dist/index.js",
   "scripts": {
