@@ -1,5 +1,4 @@
 const request = require('axios');
-const cheerio = require('cheerio');
 const moment = require('moment');
 
 
@@ -21,7 +20,6 @@ function busy_hours(place_id, key) {
 
     let process_html = resp => {
         // ACHTUNG! HACKY AF
-
         if (resp.data) {
             let html = resp.data,
                 str = ['APP_INITIALIZATION_STATE=', 'window.APP_FLAGS'],
@@ -39,12 +37,17 @@ function busy_hours(place_id, key) {
             let data = {status: 'ok'};
 
             data.week = Array.from(Array(7).keys()).map(index => {
-                return {
+                let out = {
                     day: moment().isoWeekday(index).format('ddd').toLowerCase(),
-                    hours: Array.from(popular_times[0][index][1]).map(array => {
+                    hours: []
+                };
+                if (popular_times[0][index] && popular_times[0][index][1]) {
+                    out.hours = Array.from(popular_times[0][index][1]).map(array => {
                         return format_output(array);
                     })
+
                 }
+                return out;
 
             });
 
@@ -86,11 +89,7 @@ function busy_hours(place_id, key) {
         .then(fetch_html)
         .then(process_html);
 
-    return new Promise((resolve, reject) => {
-
-        resolve(new_promise);
-
-    }).catch(handle_err);
+    return new_promise;
 
 }
 
