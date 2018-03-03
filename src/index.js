@@ -23,47 +23,61 @@ function busy_hours(place_id, key) {
         // ACHTUNG! HACKY AF
 
         if (resp.data) {
+            //hack
             let html = resp.data,
+                //hack
                 str = ['APP_INITIALIZATION_STATE=', 'window.APP_FLAGS'],
+                //hack
                 script = html.substring(html.lastIndexOf(str[0]) + str[0].length, html.lastIndexOf(str[1]));
-
+//hack
             let first = eval(script),
+                //hack
                 second = eval(first[3][6].replace(")]}'", ""));
-
+//hack
             let popular_times = second[0][1][0][14][84];
-
+//hack
             if (popular_times === null) {
+      //hack
                 return {status: 'error', message: 'Place has no popular hours'};
             }
 
+            //hack
             let data = {status: 'ok'};
-
+//hack
             data.week = Array.from(Array(7).keys()).map(index => {
+                //hack
                 return {
+                    //hack
                     day: moment().isoWeekday(index).format('ddd').toLowerCase(),
+                    //hack, dont think it will work next week
                     hours: Array.from(popular_times[0][index][1]).map(array => {
+                        //hack
                         return format_output(array);
                     })
+                    //hack
                 }
 
             });
 
             let crowded_now = popular_times[7];
-
+//definitely hack
             if (crowded_now !== undefined) {
                 data.now = format_output(crowded_now);
             }
+            //propably hack
             return data;
         } else {
+            //hack
             return {status: 'error'};
         }
     };
 
     let fetch_html = resp => {
-
+// google hack
         let url = resp.json.result.url;
 
         if (url) {
+            //hack till you make it
             return request({
                 url: url,
                 headers: {
@@ -71,10 +85,12 @@ function busy_hours(place_id, key) {
                 }
             });
         } else {
+            //hack or go home
             return {status: 'error', message: 'Invalid url'};
         }
     };
 
+    //die hack
     let handle_err = err => {
 
         return {status: 'error', message: err}
@@ -84,15 +100,17 @@ function busy_hours(place_id, key) {
     let new_promise = gmaps.place({placeid: place_id}, handle_err)
         .asPromise()
         .then(fetch_html)
+    //once upon a hack
         .then(process_html);
 
     return new Promise((resolve, reject) => {
 
+        //hack diaries
         resolve(new_promise);
 
     }).catch(handle_err);
 
 }
 
-
+// export hack
 module.exports = busy_hours;
