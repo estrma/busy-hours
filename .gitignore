@@ -1,6 +1,4 @@
-
 /node_modules/
 /package-lock.json
 /.idea/
-/i.js
 /test.js
