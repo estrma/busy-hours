@@ -1,19 +1,18 @@
 const request = require('axios');
-const cheerio = require('cheerio');
 const moment = require('moment');
 
 
 function busy_hours(place_id, key) {
-
 
     let gmaps = require('@google/maps').createClient({
         key: key,
         Promise: Promise
     });
 
-
+// hack
     let format_output = array => {
         return {
+          // totally hack
             hour: moment().hour(array[0]).format('HH'),
             percentage: array[1]
         }
@@ -21,7 +20,6 @@ function busy_hours(place_id, key) {
 
     let process_html = resp => {
         // ACHTUNG! HACKY AF
-
         if (resp.data) {
             //hack
             let html = resp.data,
@@ -29,38 +27,38 @@ function busy_hours(place_id, key) {
                 str = ['APP_INITIALIZATION_STATE=', 'window.APP_FLAGS'],
                 //hack
                 script = html.substring(html.lastIndexOf(str[0]) + str[0].length, html.lastIndexOf(str[1]));
-//hack
+          
+            //hack
             let first = eval(script),
                 //hack
                 second = eval(first[3][6].replace(")]}'", ""));
-//hack
+            //hack 😬
             let popular_times = second[0][1][0][14][84];
-//hack
+            //hack
             if (popular_times === null) {
-      //hack
+                //hack
                 return {status: 'error', message: 'Place has no popular hours'};
             }
 
             //hack
             let data = {status: 'ok'};
-//hack
+            //hack
             data.week = Array.from(Array(7).keys()).map(index => {
-                //hack
-                return {
-                    //hack
+                let out = {
                     day: moment().isoWeekday(index).format('ddd').toLowerCase(),
-                    //hack, dont think it will work next week
-                    hours: Array.from(popular_times[0][index][1]).map(array => {
-                        //hack
+                    hours: []
+                };
+                if (popular_times[0][index] && popular_times[0][index][1]) {
+                    out.hours = Array.from(popular_times[0][index][1]).map(array => {
                         return format_output(array);
                     })
-                    //hack
                 }
+                return out;
 
             });
 
             let crowded_now = popular_times[7];
-//definitely hack
+            //definitely hack 
             if (crowded_now !== undefined) {
                 data.now = format_output(crowded_now);
             }
@@ -73,9 +71,8 @@ function busy_hours(place_id, key) {
     };
 
     let fetch_html = resp => {
-// google hack
+        // google hack
         let url = resp.json.result.url;
-
         if (url) {
             //hack till you make it
             return request({
@@ -90,26 +87,18 @@ function busy_hours(place_id, key) {
         }
     };
 
-    //die hack
+    //die hack 🚨
     let handle_err = err => {
-
         return {status: 'error', message: err}
     };
-
 
     let new_promise = gmaps.place({placeid: place_id}, handle_err)
         .asPromise()
         .then(fetch_html)
-    //once upon a hack
+        //once upon a hack
         .then(process_html);
-
-    return new Promise((resolve, reject) => {
-
-        //hack diaries
-        resolve(new_promise);
-
-    }).catch(handle_err);
-
+  
+    return new_promise;
 }
 
 // export hack
