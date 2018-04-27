@@ -22,19 +22,19 @@ Response
 {
     week: [
     {
-        day: 'mon',
+        day: 'Mon',
         hours: [ // or empty array
             { 
-              hour: '06',
+              hour: 6,
               percentage: 21,
             }, { 
-              hour: '07',
+              hour: 7,
               percentage: 37,
             } ...
         ]} ...
     ],
     now: { 
-        hour: '12',
+        hour: 12,
         percentage: 30,
       }
 }
