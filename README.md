@@ -20,6 +20,12 @@ Response
 
 ```javascript
 {
+    name: '...',
+    formatted_address: '...',
+    location: {
+        lat: 52.225232,
+        lng 21.0122137
+    },
     week: [
     {
         day: 'Mon',
